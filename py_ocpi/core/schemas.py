@@ -14,7 +14,7 @@ class OCPIResponse(BaseModel):
 
     data: Union[list, dict]
     status_code: int
-    status_message: Optional[String(255)]  # type: ignore
+    status_message: Optional[String(255)] = None  # type: ignore
     timestamp: DateTime = Field(  # type: ignore
         default_factory=lambda: (
             datetime.now(tz=timezone.utc)

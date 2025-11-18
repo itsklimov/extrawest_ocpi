@@ -15,30 +15,30 @@ class Session(BaseModel):
 
     id: String(36)  # type: ignore
     start_datetime: DateTime
-    end_datetime: Optional[DateTime]
+    end_datetime: Optional[DateTime] = None
     kwh: Number
     auth_id: String(36)  # type: ignore
     auth_method: AuthMethod
     location: Location
-    meter_id: Optional[String(255)]  # type: ignore
+    meter_id: Optional[String(255)] = None  # type: ignore
     currency: String(3)  # type: ignore
     charging_periods: List[ChargingPeriod] = []
-    total_cost: Optional[Number]
+    total_cost: Optional[Number] = None
     status: SessionStatus
     last_updated: DateTime
 
 
 class SessionPartialUpdate(BaseModel):
-    id: Optional[String(36)]  # type: ignore
-    start_datetime: Optional[DateTime]
-    end_datetime: Optional[DateTime]
-    kwh: Optional[Number]
-    auth_id: Optional[String(36)]  # type: ignore
-    auth_method: Optional[AuthMethod]
-    location: Optional[Location]
-    meter_id: Optional[String(255)]  # type: ignore
-    currency: Optional[String(3)]  # type: ignore
-    charging_periods: Optional[List[ChargingPeriod]]
-    total_cost: Optional[Number]
-    status: Optional[SessionStatus]
-    last_updated: Optional[DateTime]
+    id: Optional[String(36)] = None  # type: ignore
+    start_datetime: Optional[DateTime] = None
+    end_datetime: Optional[DateTime] = None
+    kwh: Optional[Number] = None
+    auth_id: Optional[String(36)] = None  # type: ignore
+    auth_method: Optional[AuthMethod] = None
+    location: Optional[Location] = None
+    meter_id: Optional[String(255)] = None  # type: ignore
+    currency: Optional[String(3)] = None  # type: ignore
+    charging_periods: Optional[List[ChargingPeriod]] = None
+    total_cost: Optional[Number] = None
+    status: Optional[SessionStatus] = None
+    last_updated: Optional[DateTime] = None

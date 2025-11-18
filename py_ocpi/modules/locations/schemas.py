@@ -28,7 +28,7 @@ class AdditionalGeoLocation(GeoLocation):
     https://github.com/ocpi/ocpi/blob/2.2.1/mod_locations.asciidoc#mod_locations_additionalgeolocation_class
     """
 
-    name: Optional[DisplayText]
+    name: Optional[DisplayText] = None
 
 
 class StatusSchedule(BaseModel):
@@ -37,7 +37,7 @@ class StatusSchedule(BaseModel):
     """
 
     period_begin: DateTime
-    period_end: Optional[DateTime]
+    period_end: Optional[DateTime] = None
     status: Status
 
 
@@ -96,6 +96,6 @@ class EnergyMix(BaseModel):
 
     is_green_energy: bool
     energy_sources: List[EnergySource]
-    environ_impact: Optional[EnvironmentalImpact]
+    environ_impact: Optional[EnvironmentalImpact] = None
     supplier_name: String(max_length=64)  # type: ignore
     energy_product_name: String(max_length=64)  # type: ignore

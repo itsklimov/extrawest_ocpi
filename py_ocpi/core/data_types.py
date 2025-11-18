@@ -3,8 +3,9 @@ OCPI data types based on https://github.com/ocpi/ocpi/blob/2.2.1/types.asciidoc
 """
 
 from datetime import datetime, timezone
-from typing import Type
-from pydantic.fields import ModelField
+from typing import Any, Type
+from pydantic import GetCoreSchemaHandler
+from pydantic_core import core_schema
 
 from .config import settings
 
@@ -19,17 +20,22 @@ class StringBase(str):
     max_length: int
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=["String"],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: str(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v, field: ModelField):
+    def validate_with_info(cls, v: Any, _info: Any) -> "StringBase":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: str) -> "StringBase":
         if not isinstance(v, str):
             raise TypeError(f"excpected string but received {type(v)}")
         try:
@@ -38,7 +44,7 @@ class StringBase(str):
             raise ValueError("invalid string format") from e
         if len(v) > cls.max_length:
             raise ValueError(
-                f"{field.name} length must be lower or equal to {cls.max_length}"
+                f"string length must be lower or equal to {cls.max_length}"
             )
         return cls(v)
 
@@ -61,24 +67,29 @@ class CiStringBase(str):
     max_length: int
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=["string"],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: str(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v, field: ModelField):
+    def validate_with_info(cls, v: Any, _info: Any) -> "CiStringBase":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: str) -> "CiStringBase":
         if not isinstance(v, str):
             raise TypeError(f"excpected string but received {type(v)}")
         if not v.isascii():
             raise ValueError("invalid cistring format")
         if len(v) > cls.max_length:
             raise ValueError(
-                f"{field.name} length must be lower or equal to {cls.max_length}"
+                f"cistring length must be lower or equal to {cls.max_length}"
             )
 
         if settings.CI_STRING_LOWERCASE_PREFERENCE:
@@ -102,18 +113,32 @@ class URL(str):
     """
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=["http://www.w3.org/Addressing/URL/uri-spec.html"],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: str(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v, field: ModelField):
-        v = String(255).validate(v, field)  # type: ignore
+    def validate_with_info(cls, v: Any, _info: Any) -> "URL":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: str) -> "URL":
+        # Use StringBase validation directly
+        StringType = String(255)
+        if not isinstance(v, str):
+            raise TypeError(f"excpected string but received {type(v)}")
+        try:
+            v.encode("UTF-8")
+        except UnicodeError as e:
+            raise ValueError("invalid string format") from e
+        if len(v) > 255:
+            raise ValueError("url length must be lower or equal to 255")
         return cls(v)
 
     def __repr__(self):
@@ -130,23 +155,22 @@ class DateTime(str):
     """
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=[
-                (
-                    datetime.now(timezone.utc)
-                    .isoformat(timespec="seconds")
-                    .replace("+00:00", "Z")
-                ),
-            ],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: str(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v):
+    def validate_with_info(cls, v: Any, _info: Any) -> "DateTime":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: str) -> "DateTime":
         if v.endswith("Z"):
             v = f"{v[:-1]}+00:00"
 
@@ -165,17 +189,22 @@ class DateTime(str):
 
 class DisplayText(dict):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=[{"language": "en", "text": "Standard Tariff"}],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: dict(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v):
+    def validate_with_info(cls, v: Any, _info: Any) -> "DisplayText":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: dict) -> "DisplayText":
         if not isinstance(v, dict):
             raise TypeError(f"excpected dict but received {type(v)}")
         if "language" not in v:
@@ -187,24 +216,29 @@ class DisplayText(dict):
         return cls(v)
 
     def __repr__(self):
-        return f"DateTime({super().__repr__()})"
+        return f"DisplayText({super().__repr__()})"
 
 
 class Number(float):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=[],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: float(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v):
+    def validate_with_info(cls, v: Any, _info: Any) -> "Number":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: float | int) -> "Number":
         if not any([isinstance(v, float), isinstance(v, int)]):
-            TypeError(f"excpected float but received {type(v)}")
+            raise TypeError(f"excpected float but received {type(v)}")
         return cls(float(v))
 
     def __repr__(self):
@@ -213,17 +247,22 @@ class Number(float):
 
 class Price(dict):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(
-            examples=[{"excl_vat": 1.0000, "incl_vat": 1.2500}],
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.with_info_plain_validator_function(
+            cls.validate_with_info,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: dict(x)
+            ),
         )
 
     @classmethod
-    def validate(cls, v):
+    def validate_with_info(cls, v: Any, _info: Any) -> "Price":
+        return cls.validate(v)
+
+    @classmethod
+    def validate(cls, v: dict) -> "Price":
         if not isinstance(v, dict):
             raise TypeError("dictionary required")
         if "excl_vat" not in v:

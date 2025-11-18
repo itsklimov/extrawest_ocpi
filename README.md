@@ -22,7 +22,7 @@ OCPI Documentation: [2.2.1](https://github.com/ocpi/ocpi/tree/release-2.2.1-bugf
 
 ---
 
-Python >= 3.10
+Python >= 3.13
 
 
 ## Installation

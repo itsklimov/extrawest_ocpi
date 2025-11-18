@@ -30,10 +30,10 @@ class SignedData(BaseModel):
     """
 
     encoding_method: CiString(36)  # type: ignore
-    encoding_method_version: Optional[int]
-    public_key: Optional[String(512)]  # type: ignore
+    encoding_method_version: Optional[int] = None
+    public_key: Optional[String(512)] = None  # type: ignore
     signed_values: List[SignedValue]
-    url: Optional[String(512)]  # type: ignore
+    url: Optional[String(512)] = None  # type: ignore
 
 
 class CdrDimension(BaseModel):
@@ -52,7 +52,7 @@ class ChargingPeriod(BaseModel):
 
     start_date_time: DateTime
     dimensions: List[CdrDimension]
-    tariff_id: Optional[CiString(36)]  # type: ignore
+    tariff_id: Optional[CiString(36)] = None  # type: ignore
 
 
 class CdrToken(BaseModel):
@@ -73,11 +73,11 @@ class CdrLocation(BaseModel):
     """
 
     id: CiString(36)  # type: ignore
-    name: Optional[String(255)]  # type: ignore
+    name: Optional[String(255)] = None  # type: ignore
     address: String(45)  # type: ignore
     city: String(45)  # type: ignore
-    postal_code: Optional[String(10)]  # type: ignore
-    state: Optional[String(20)]  # type: ignore
+    postal_code: Optional[String(10)] = None  # type: ignore
+    state: Optional[String(20)] = None  # type: ignore
     country: String(3)  # type: ignore
     coordinates: GeoLocation
     evse_id: CiString(48)  # type: ignore
@@ -97,28 +97,28 @@ class Cdr(BaseModel):
     id: CiString(39)  # type: ignore
     start_date_time: DateTime
     end_date_time: DateTime
-    session_id: Optional[CiString(36)]  # type: ignore
+    session_id: Optional[CiString(36)] = None  # type: ignore
     cdr_token: CdrToken
     auth_method: AuthMethod
-    authorization_reference: Optional[CiString(36)]  # type: ignore
+    authorization_reference: Optional[CiString(36)] = None  # type: ignore
     cdr_location: CdrLocation
-    meter_id: Optional[String(255)]  # type: ignore
+    meter_id: Optional[String(255)] = None  # type: ignore
     currency: String(3)  # type: ignore
     tariffs: List[Tariff] = []
     charging_periods: List[ChargingPeriod]
-    signed_data: Optional[SignedData]
+    signed_data: Optional[SignedData] = None
     total_cost: Price
-    total_fixed_cost: Optional[Price]
+    total_fixed_cost: Optional[Price] = None
     total_energy: Number
-    total_energy_cost: Optional[Price]
+    total_energy_cost: Optional[Price] = None
     total_time: Number
-    total_time_cost: Optional[Price]
-    total_parking_time: Optional[Number]
-    total_parking_cost: Optional[Price]
-    total_reservation_cost: Optional[Price]
-    remark: Optional[String(255)]  # type: ignore
-    invoice_reference_id: Optional[CiString(36)]  # type: ignore
-    credit: Optional[bool]
-    credit_reference_id: Optional[CiString(39)]  # type: ignore
-    home_charging_compensation: Optional[bool]
+    total_time_cost: Optional[Price] = None
+    total_parking_time: Optional[Number] = None
+    total_parking_cost: Optional[Price] = None
+    total_reservation_cost: Optional[Price] = None
+    remark: Optional[String(255)] = None  # type: ignore
+    invoice_reference_id: Optional[CiString(36)] = None  # type: ignore
+    credit: Optional[bool] = None
+    credit_reference_id: Optional[CiString(39)] = None  # type: ignore
+    home_charging_compensation: Optional[bool] = None
     last_updated: DateTime

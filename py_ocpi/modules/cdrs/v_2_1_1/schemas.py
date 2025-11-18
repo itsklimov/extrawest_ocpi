@@ -40,13 +40,13 @@ class Cdr(BaseModel):
     auth_id: String(36)  # type: ignore
     auth_method: AuthMethod
     location: Location
-    meter_id: Optional[String(255)]  # type: ignore
+    meter_id: Optional[String(255)] = None  # type: ignore
     currency: String(3)  # type: ignore
     tariffs: List[Tariff] = []
     charging_periods: List[ChargingPeriod]
     total_cost: Number
     total_energy: Number
     total_time: Number
-    total_parking_time: Optional[Number]
-    remark: Optional[String(255)]  # type: ignore
+    total_parking_time: Optional[Number] = None
+    remark: Optional[String(255)] = None  # type: ignore
     last_updated: DateTime

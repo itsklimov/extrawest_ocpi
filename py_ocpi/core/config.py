@@ -1,11 +1,17 @@
 from typing import List, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, validator
+from pydantic import AnyHttpUrl, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from py_ocpi.core.logs import LoggingConfig, logger
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_file=".env",
+    )
+
     ENVIRONMENT: str = "production"
     NO_AUTH: bool = False
     PROJECT_NAME: str = "OCPI"
@@ -21,8 +27,8 @@ class Settings(BaseSettings):
     TRAILING_SLASH: bool = True
     CI_STRING_LOWERCASE_PREFERENCE: bool = True
 
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(
         cls, v: Union[str, List[str]]
     ) -> Union[List[str], str]:
@@ -31,10 +37,6 @@ class Settings(BaseSettings):
         if isinstance(v, (list, str)):
             return v
         raise ValueError(v)
-
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
 
 
 settings = Settings()

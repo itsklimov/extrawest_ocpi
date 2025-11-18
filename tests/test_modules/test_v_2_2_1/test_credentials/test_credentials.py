@@ -49,6 +49,8 @@ def test_cpo_get_credentials_v_2_2_1():
 @pytest.mark.asyncio
 @patch("py_ocpi.modules.credentials.v_2_2_1.api.cpo.httpx.AsyncClient")
 async def test_cpo_post_credentials_v_2_2_1(async_client):
+    from httpx import ASGITransport
+
     class MockCrud(Crud):
         @classmethod
         async def do(
@@ -83,7 +85,7 @@ async def test_cpo_post_credentials_v_2_2_1(async_client):
 
     app_1.dependency_overrides[get_versions] = override_get_versions
 
-    async_client.return_value = AsyncClient(app=app_1, base_url="http://test")
+    async_client.return_value = AsyncClient(transport=ASGITransport(app=app_1), base_url="http://test")
 
     app_2 = get_application(
         version_numbers=[VersionNumber.v_2_2_1],
@@ -93,7 +95,7 @@ async def test_cpo_post_credentials_v_2_2_1(async_client):
         modules=[enums.ModuleID.credentials_and_registration],
     )
 
-    async with AsyncClient(app=app_2, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app_2), base_url="http://test") as client:
         response = await client.post(
             "/ocpi/cpo/2.2.1/credentials/",
             json=CREDENTIALS_TOKEN_CREATE,

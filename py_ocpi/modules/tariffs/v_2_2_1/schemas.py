@@ -27,7 +27,7 @@ class PriceComponent(BaseModel):
 
     type: TariffDimensionType
     price: Number
-    vat: Optional[Number]
+    vat: Optional[Number] = None
     step_size: int
 
 
@@ -36,20 +36,20 @@ class TariffRestrictions(BaseModel):
     https://github.com/ocpi/ocpi/blob/2.2.1/mod_tariffs.asciidoc#146-tariffrestrictions-class
     """
 
-    start_time: Optional[String(5)]  # type: ignore
-    end_time: Optional[String(5)]  # type: ignore
-    start_date: Optional[String(10)]  # type: ignore
-    end_date: Optional[String(10)]  # type: ignore
-    min_kwh: Optional[Number]
-    max_kwh: Optional[Number]
-    min_current: Optional[Number]
-    max_current: Optional[Number]
-    min_power: Optional[Number]
-    max_power: Optional[Number]
-    min_duration: Optional[int]
-    max_duration: Optional[int]
+    start_time: Optional[String(5)] = None  # type: ignore
+    end_time: Optional[String(5)] = None  # type: ignore
+    start_date: Optional[String(10)] = None  # type: ignore
+    end_date: Optional[String(10)] = None  # type: ignore
+    min_kwh: Optional[Number] = None
+    max_kwh: Optional[Number] = None
+    min_current: Optional[Number] = None
+    max_current: Optional[Number] = None
+    min_power: Optional[Number] = None
+    max_power: Optional[Number] = None
+    min_duration: Optional[int] = None
+    max_duration: Optional[int] = None
     day_of_week: List[DayOfWeek] = []
-    reservation: Optional[ReservationRestrictionType]
+    reservation: Optional[ReservationRestrictionType] = None
 
 
 class TariffElement(BaseModel):
@@ -58,7 +58,7 @@ class TariffElement(BaseModel):
     """
 
     price_components: List[PriceComponent]
-    restrictions: Optional[TariffRestrictions]
+    restrictions: Optional[TariffRestrictions] = None
 
 
 class Tariff(BaseModel):
@@ -70,13 +70,13 @@ class Tariff(BaseModel):
     party_id: CiString(3)  # type: ignore
     id: CiString(36)  # type: ignore
     currency: String(3)  # type: ignore
-    type: Optional[TariffType]
+    type: Optional[TariffType] = None
     tariff_alt_text: List[DisplayText] = []
-    tariff_alt_url: Optional[URL]
-    min_price: Optional[Price]
-    max_price: Optional[Price]
+    tariff_alt_url: Optional[URL] = None
+    min_price: Optional[Price] = None
+    max_price: Optional[Price] = None
     elements: List[TariffElement]
-    start_date_time: Optional[DateTime]
-    end_date_time: Optional[DateTime]
-    energy_mix: Optional[EnergyMix]
+    start_date_time: Optional[DateTime] = None
+    end_date_time: Optional[DateTime] = None
+    energy_mix: Optional[EnergyMix] = None
     last_updated: DateTime
